@@ -20,3 +20,11 @@ end
 
 eval_gemfile File.expand_path('../Gemfile.rails', __FILE__)
 eval_gemfile File.expand_path('../Gemfile.other', __FILE__)
+
+require File.expand_path('../../bundler/multi_lockfile_hack.rb', __FILE__)
+extend Bundler::MultiLockfileHack
+
+generate_lockfile(groups: :doc, lockfile: 'doc.lock')
+generate_lockfile(groups: [:doc, :test], lockfile: 'doc.test.lock')
+generate_lockfile(gemfile: File.expand_path('../Gemfile.other', __FILE__), lockfile: 'other.lock')
+generate_lockfile(gemfile: File.expand_path('../Gemfile.rails', __FILE__), groups: :test, lockfile: 'rails.test.lock')
