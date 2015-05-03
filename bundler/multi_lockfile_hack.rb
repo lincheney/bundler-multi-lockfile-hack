@@ -1,0 +1,2 @@
+module Bundler::MultiLockfileHack
+end
