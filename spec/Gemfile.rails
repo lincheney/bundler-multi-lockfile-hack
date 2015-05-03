@@ -1,0 +1,6 @@
+gem 'rails'
+gem 'haml-rails'
+gem 'sass-rails'
+gem 'jquery-rails'
+
+eval_gemfile File.expand_path('../Gemfile.rails.test', __FILE__)

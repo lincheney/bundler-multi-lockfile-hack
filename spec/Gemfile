@@ -1,0 +1,22 @@
+# Gemfile structure:
+#   Gemfile
+#       Gemfile.other
+#       Gemfile.rails
+#           Gemfile.rails.test
+
+source 'https://rubygems.org'
+
+gem 'rake'
+gem 'sqlite3'
+
+group :doc do
+    gem 'rdoc'
+    gem 'sdoc'
+end
+
+group :test do
+    gem 'rspec'
+end
+
+eval_gemfile File.expand_path('../Gemfile.rails', __FILE__)
+eval_gemfile File.expand_path('../Gemfile.other', __FILE__)
