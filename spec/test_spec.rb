@@ -11,6 +11,9 @@ def bundle(cmd)
   system(cmd)
 end
 
+# try to load bundler first
+exit(1) unless bundle('--version')
+
 lockfiles = {
   "doc.lock" => %w{ rdoc sdoc },
   "doc.test.lock" => %w{ rdoc sdoc rspec rspec-rails shoulda-matchers codeclimate-test-reporter },
@@ -73,6 +76,7 @@ shared_examples 'a lockfile writer' do
         expect(sources.map(&:name)).to match_array(expected_sources)
       end
     end
+
   end
 end
 
