@@ -1,3 +1,8 @@
+PATH
+  remote: /home/0x43/Documents/github/bundler-multi-lockfile-hack/spec/rbench-gem
+  specs:
+    rbench (0.2.4)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -17,3 +22,4 @@ DEPENDENCIES
   activesupport
   json
   maruku
+  rbench!

@@ -14,12 +14,16 @@ end
 lockfiles = {
   "doc.lock" => %w{ rdoc sdoc },
   "doc.test.lock" => %w{ rdoc sdoc rspec rspec-rails shoulda-matchers codeclimate-test-reporter },
-  "other.lock" => %w{ json activesupport maruku },
+  "other.lock" => %w{ json activesupport maruku rbench },
   "rails.test.lock" => %w{ rspec-rails shoulda-matchers codeclimate-test-reporter },
 }
 
 git_sources = {
   'codeclimate-test-reporter' => 'ruby-test-reporter',
+}
+
+path_sources = {
+  'rbench' => 'rbench-gem',
 }
 
 shared_examples 'a lockfile writer' do
@@ -52,8 +56,16 @@ shared_examples 'a lockfile writer' do
     describe 'sources' do
       it "#{file} should have only the correct git sources" do
         lockfile = read_lockfile(file)
-        sources = lockfile.sources.select{|s| s.is_a? Bundler::Source::Git}
+        sources = lockfile.sources.select{|s| s.instance_of? Bundler::Source::Git}
         expected_sources = deps.map{|d| git_sources[d]}.compact
+        expect(sources.map(&:name)).to match_array(expected_sources)
+      end
+
+      it "#{file} should have only the correct path sources" do
+        lockfile = read_lockfile(file)
+#         use instance of, since Source::Git < Source::Path
+        sources = lockfile.sources.select{|s| s.instance_of? Bundler::Source::Path}
+        expected_sources = deps.map{|d| path_sources[d]}.compact
         expect(sources.map(&:name)).to match_array(expected_sources)
       end
     end
