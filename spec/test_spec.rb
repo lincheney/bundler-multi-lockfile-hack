@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'securerandom'
 
 def read_lockfile(path)
   Bundler::LockfileParser.new(Bundler.read_file(path))
@@ -85,6 +86,20 @@ describe 'multi lockfile hack' do
         expect(File.read('Gemfile.lock')).to eql File.read('Gemfile.lock.backup')
       end
 
+      it_behaves_like 'a lockfile writer'
+    end
+
+    context 'with existing lock files' do
+      before(:all) do
+        Dir.chdir(File.expand_path('install-with-lock', __dir__))
+        FileUtils.rm(Dir.glob('*.lock'))
+        FileUtils.cp('Gemfile.lock.backup', 'Gemfile.lock')
+        # write some giberrish to the lock files
+        lockfiles.each_key{|file| File.write(file, 10.times.map{SecureRandom.hex}.join) }
+        bundle('install')
+      end
+
+      # it should completely ignore them
       it_behaves_like 'a lockfile writer'
     end
   end
