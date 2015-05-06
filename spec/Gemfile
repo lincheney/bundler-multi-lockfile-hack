@@ -17,6 +17,12 @@ end
 gem 'rspec', group: :test
 gem 'simplecov', git: 'https://github.com/colszowka/simplecov', tag: 'v0.10.0'
 
+group :git_sources do
+  gem 'mime-types', git: 'https://github.com/mime-types/ruby-mime-types/'
+  gem 'multi_json', git: 'https://github.com/intridea/multi_json'
+  gem 'colorize', git: 'https://github.com/fazibear/colorize'
+end
+
 root = File.expand_path('..', __FILE__)
 eval_gemfile File.join(root, 'Gemfile.rails')
 eval_gemfile File.join(root, 'Gemfile.other')
