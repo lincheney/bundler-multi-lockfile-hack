@@ -34,6 +34,8 @@ module Bundler::MultiLockfileHack
 
       deps = deps.select{|d| (d.groups & data.groups).any?} if data.groups
       sources = SourceListHack.new(@sources, deps.map(&:name))
+      @sources.git_sources.each{|git| git.instance_eval{@git_proxy = nil} }
+
       DefinitionHack2.new(data.lockfile, deps, sources, @unlock, @ruby_version).lock(data.lockfile)
     end
   end
