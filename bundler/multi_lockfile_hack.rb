@@ -34,9 +34,11 @@ module Bundler::MultiLockfileHack
 
       deps = deps.select{|d| (d.groups & data.groups).any?} if data.groups
       sources = SourceListHack.new(@sources, deps.map(&:name))
-      @sources.git_sources.each{|git| git.instance_eval{@git_proxy = nil} }
-
-      DefinitionHack2.new(data.lockfile, deps, sources, @unlock, @ruby_version).lock(data.lockfile)
+      DefinitionHack2.new(@resolve, data.lockfile, deps, sources, @unlock, @ruby_version).lock(data.lockfile)
+    rescue => e
+      puts e.backtrace.reverse.join("\n")
+      p e
+      raise e
     end
   end
 
@@ -51,6 +53,11 @@ module Bundler::MultiLockfileHack
   end
 
   class DefinitionHack2 < Bundler::Definition
+    def initialize(resolve, *args)
+      super(*args)
+      @resolve = resolve
+    end
+
     def resolve
       super.select{|spec| @dependencies.map(&:name).include? spec.name}
     end

@@ -16,10 +16,14 @@ lockfiles = {
   "doc.test.lock" => %w{ rdoc sdoc rspec rspec-rails shoulda-matchers codeclimate-test-reporter },
   "other.lock" => %w{ json activesupport maruku rbench },
   "rails.test.lock" => %w{ rspec-rails shoulda-matchers codeclimate-test-reporter },
+  "git_only.lock" => %w{ mime-types multi_json colorize },
 }
 
 git_sources = {
   'codeclimate-test-reporter' => 'ruby-test-reporter',
+  'mime-types' => 'ruby-mime-types',
+  'colorize' => 'colorize',
+  'multi_json' => 'multi_json',
 }
 
 path_sources = {
