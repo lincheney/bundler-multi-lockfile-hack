@@ -18,13 +18,14 @@ module Bundler::MultiLockfileHack
   end
 
   class DefinitionHack < Bundler::Definition
-    def lock(*)
-      result = super
-      Bundler::MultiLockfileHack.lockfiles.values.each{|data| _write_lock(data)}
+    def lock(filename)
+      result = super(filename)
+      master = Bundler::LockfileParser.new(Bundler.read_file(filename))
+      Bundler::MultiLockfileHack.lockfiles.values.each{|data| _write_lock(data, master)}
       result
     end
 
-    def _write_lock(data)
+    def _write_lock(data, master)
       if data.gemfile
         deps = Bundler::Dsl.new.eval_gemfile(data.gemfile)
       else
@@ -32,7 +33,18 @@ module Bundler::MultiLockfileHack
       end
 
       deps = deps.select{|d| (d.groups & data.groups).any?} if data.groups
-      DefinitionHack2.new(data.lockfile, deps, @sources, @unlock, @ruby_version).lock(data.lockfile)
+      sources = SourceListHack.new(@sources, deps.map(&:name))
+      DefinitionHack2.new(data.lockfile, deps, sources, @unlock, @ruby_version).lock(data.lockfile)
+    end
+  end
+
+  class SourceListHack < Bundler::SourceList
+    def initialize(src, names)
+      super()
+      filter = proc{|src| (src.specs.map(&:name) & names).any?}
+      @path_sources = src.path_sources.select(&filter)
+      @git_sources = src.git_sources.select(&filter)
+      @rubygems_sources = (src.rubygems_sources - [@rubygems_aggregate]).select(&filter)
     end
   end
 
