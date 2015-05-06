@@ -6,9 +6,9 @@ end
 
 lockfiles = {
   "doc.lock" => %w{ rdoc sdoc },
-  "doc.test.lock" => %w{ rdoc sdoc rspec rspec-rails shoulda-matchers },
+  "doc.test.lock" => %w{ rdoc sdoc rspec rspec-rails shoulda-matchers codeclimate-test-reporter },
   "other.lock" => %w{ json activesupport maruku },
-  "rails.test.lock" => %w{ rspec-rails shoulda-matchers },
+  "rails.test.lock" => %w{ rspec-rails shoulda-matchers codeclimate-test-reporter },
 }
 
 shared_examples 'a lockfile writer' do
@@ -39,7 +39,6 @@ describe 'multi lockfile hack' do
   let(:gemfile_lock)  { read_lockfile('Gemfile.lock') }
 
   describe 'install' do
-
     context 'with no Gemfile.lock' do
       before(:all) do
         Dir.chdir(File.expand_path('install', __dir__))
