@@ -88,4 +88,47 @@ describe 'multi lockfile hack' do
       it_behaves_like 'a lockfile writer'
     end
   end
+
+  describe 'update' do
+    context 'with no Gemfile.lock' do
+      before(:all) do
+        Dir.chdir(File.expand_path('install', __dir__))
+        FileUtils.rm(Dir.glob('*.lock'))
+        bundle('update')
+      end
+
+      it_behaves_like 'a lockfile writer'
+    end
+
+    context 'with an existing Gemfile.lock' do
+      before(:all) do
+        Dir.chdir(File.expand_path('install-with-lock', __dir__))
+        FileUtils.rm(Dir.glob('*.lock'))
+        FileUtils.cp('Gemfile.lock.backup', 'Gemfile.lock')
+        bundle('update')
+      end
+
+      it 'should have updated Gemfile.lock' do
+        expect(File.read('Gemfile.lock')).to_not eql File.read('Gemfile.lock.backup')
+      end
+
+      it_behaves_like 'a lockfile writer'
+    end
+
+    context 'updating a single gem' do
+      before(:all) do
+        Dir.chdir(File.expand_path('install-with-lock', __dir__))
+        FileUtils.rm(Dir.glob('*.lock'))
+        FileUtils.cp('Gemfile.lock.backup', 'Gemfile.lock')
+        bundle('update codeclimate-test-reporter')
+      end
+
+      it 'should have updated Gemfile.lock' do
+        expect(File.read('Gemfile.lock')).to_not eql File.read('Gemfile.lock.backup')
+      end
+
+      it_behaves_like 'a lockfile writer'
+    end
+  end
+
 end
