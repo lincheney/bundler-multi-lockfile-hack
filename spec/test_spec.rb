@@ -120,7 +120,7 @@ describe 'multi lockfile hack' do
         Dir.chdir(File.expand_path('install-with-lock', __dir__))
         FileUtils.rm(Dir.glob('*.lock'))
         FileUtils.cp('Gemfile.lock.backup', 'Gemfile.lock')
-        bundle('update codeclimate-test-reporter')
+        bundle('update sqlite3')
       end
 
       it 'should have updated Gemfile.lock' do
