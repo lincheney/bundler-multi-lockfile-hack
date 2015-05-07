@@ -113,7 +113,7 @@ describe 'multi lockfile hack' do
     context 'with existing lock files' do
       before(:all) do
         FileUtils.cp('Gemfile.lock.backup', 'Gemfile.lock')
-        # write some giberrish to the lock files
+        # write some gibberish to the lock files
         lockfiles.each_key{|file| File.write(file, 10.times.map{SecureRandom.hex}.join) }
         bundle('install')
       end

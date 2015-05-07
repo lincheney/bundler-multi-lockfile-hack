@@ -35,7 +35,7 @@ module Bundler::MultiLockfileHack
       deps = deps.select{|d| (d.groups & data.groups).any?} if data.groups
       names = deps.map(&:name)
       sources = SourceListHack.new(@sources){|src| (src.specs.map(&:name) & names).any?}
-      DefinitionHack2.new(@resolve, data.lockfile, deps, sources, @unlock, @ruby_version).lock(data.lockfile)
+      DefinitionHack2.new(@resolve, nil, deps, sources, @unlock, @ruby_version).lock(data.lockfile)
     end
   end
 
