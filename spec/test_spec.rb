@@ -83,11 +83,14 @@ end
 describe 'multi lockfile hack' do
   let(:gemfile_lock)  { read_lockfile('Gemfile.lock') }
 
+  before(:all) do
+    Dir.chdir(File.expand_path('test-dir', __dir__))
+    FileUtils.rm(Dir.glob('*.lock'))
+  end
+
   describe 'install' do
     context 'with no Gemfile.lock' do
       before(:all) do
-        Dir.chdir(File.expand_path('install', __dir__))
-        FileUtils.rm(Dir.glob('*.lock'))
         bundle('install')
       end
 
@@ -96,8 +99,6 @@ describe 'multi lockfile hack' do
 
     context 'with an existing Gemfile.lock' do
       before(:all) do
-        Dir.chdir(File.expand_path('install-with-lock', __dir__))
-        FileUtils.rm(Dir.glob('*.lock'))
         FileUtils.cp('Gemfile.lock.backup', 'Gemfile.lock')
         bundle('install')
       end
@@ -111,8 +112,6 @@ describe 'multi lockfile hack' do
 
     context 'with existing lock files' do
       before(:all) do
-        Dir.chdir(File.expand_path('install-with-lock', __dir__))
-        FileUtils.rm(Dir.glob('*.lock'))
         FileUtils.cp('Gemfile.lock.backup', 'Gemfile.lock')
         # write some giberrish to the lock files
         lockfiles.each_key{|file| File.write(file, 10.times.map{SecureRandom.hex}.join) }
@@ -127,8 +126,6 @@ describe 'multi lockfile hack' do
   describe 'update' do
     context 'with no Gemfile.lock' do
       before(:all) do
-        Dir.chdir(File.expand_path('install', __dir__))
-        FileUtils.rm(Dir.glob('*.lock'))
         bundle('update')
       end
 
@@ -137,8 +134,6 @@ describe 'multi lockfile hack' do
 
     context 'with an existing Gemfile.lock' do
       before(:all) do
-        Dir.chdir(File.expand_path('install-with-lock', __dir__))
-        FileUtils.rm(Dir.glob('*.lock'))
         FileUtils.cp('Gemfile.lock.backup', 'Gemfile.lock')
         bundle('update')
       end
@@ -152,8 +147,6 @@ describe 'multi lockfile hack' do
 
     context 'updating a single gem' do
       before(:all) do
-        Dir.chdir(File.expand_path('install-with-lock', __dir__))
-        FileUtils.rm(Dir.glob('*.lock'))
         FileUtils.cp('Gemfile.lock.backup', 'Gemfile.lock')
         bundle('update sqlite3')
       end
