@@ -35,7 +35,7 @@ GIT
     mime-types (2.5)
 
 PATH
-  remote: /home/0x43/Documents/github/bundler-multi-lockfile-hack/spec/rbench-gem
+  remote: <%= ENV['__PATH__'] %>/rbench-gem
   specs:
     rbench (0.2.4)
 

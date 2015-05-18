@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'securerandom'
 require 'fileutils'
 require 'bundler'
+require 'erb'
 p Bundler
 
 def read_lockfile(path)
@@ -90,7 +91,10 @@ end
 
 describe 'multi lockfile hack' do
   def compare_lockfiles(a, b, equal=true)
-    files = [a, b].map{|file| File.read(file).strip.split("\n\n")}
+    files = [a, b].map{|file| File.read(file)}
+    files[1] = ERB.new(files[1]).result
+    files.map!{|file| file.strip.split("\n\n")}
+    
     if equal
       expect(files[0]).to match_array(files[1])
     else
@@ -98,9 +102,14 @@ describe 'multi lockfile hack' do
     end
   end
 
+  def copy_lockfile
+    system("erb Gemfile.lock.backup > Gemfile.lock")
+  end
+
   let(:gemfile_lock)  { read_lockfile('Gemfile.lock') }
 
   before(:all) do
+    ENV['__PATH__'] = File.dirname(__FILE__)
     Dir.chdir(File.expand_path('test-dir', File.dirname(__FILE__)))
     FileUtils.rm(Dir.glob('*.lock'))
   end
@@ -116,7 +125,7 @@ describe 'multi lockfile hack' do
 
     context 'with an existing Gemfile.lock' do
       before(:all) do
-        FileUtils.cp('Gemfile.lock.backup', 'Gemfile.lock')
+        copy_lockfile
         bundle('install')
       end
 
@@ -151,7 +160,7 @@ describe 'multi lockfile hack' do
 
     context 'with an existing Gemfile.lock' do
       before(:all) do
-        FileUtils.cp('Gemfile.lock.backup', 'Gemfile.lock')
+        copy_lockfile
         bundle('update')
       end
 
