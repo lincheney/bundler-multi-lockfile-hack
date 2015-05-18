@@ -89,6 +89,15 @@ shared_examples 'a lockfile writer' do
 end
 
 describe 'multi lockfile hack' do
+  def compare_lockfiles(a, b, equal=true)
+    files = [a, b].map{|file| File.read(file).strip.split("\n\n")}
+    if equal
+      expect(files[0]).to match_array(files[1])
+    else
+      expect(files[0]).to_not match_array(files[1])
+    end
+  end
+
   let(:gemfile_lock)  { read_lockfile('Gemfile.lock') }
 
   before(:all) do
@@ -112,7 +121,7 @@ describe 'multi lockfile hack' do
       end
 
       it 'should not need to update Gemfile.lock' do
-        expect(File.read('Gemfile.lock')).to eql File.read('Gemfile.lock.backup')
+        compare_lockfiles('Gemfile.lock', 'Gemfile.lock.backup', equal=true)
       end
 
       it_behaves_like 'a lockfile writer'
@@ -147,7 +156,7 @@ describe 'multi lockfile hack' do
       end
 
       it 'should have updated Gemfile.lock' do
-        expect(File.read('Gemfile.lock')).to_not eql File.read('Gemfile.lock.backup')
+        compare_lockfiles('Gemfile.lock', 'Gemfile.lock.backup', equal=false)
       end
 
       it_behaves_like 'a lockfile writer'
@@ -160,7 +169,7 @@ describe 'multi lockfile hack' do
       end
 
       it 'should have updated Gemfile.lock' do
-        expect(File.read('Gemfile.lock')).to_not eql File.read('Gemfile.lock.backup')
+        compare_lockfiles('Gemfile.lock', 'Gemfile.lock.backup', equal=false)
       end
 
       it_behaves_like 'a lockfile writer'
