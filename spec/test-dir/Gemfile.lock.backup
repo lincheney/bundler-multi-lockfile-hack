@@ -35,7 +35,7 @@ GIT
     mime-types (2.5)
 
 PATH
-  remote: <%= ENV['__PATH__'] %>/rbench-gem
+  remote: rbench-gem
   specs:
     rbench (0.2.4)
 

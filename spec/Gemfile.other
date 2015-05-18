@@ -1,4 +1,4 @@
 gem 'json'
 gem 'activesupport'
 gem 'maruku'
-gem 'rbench', path: File.expand_path('../rbench-gem', __FILE__)
+gem 'rbench', path: File.expand_path('../test-dir/rbench-gem', __FILE__)
