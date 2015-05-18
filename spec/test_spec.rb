@@ -11,6 +11,7 @@ def bundle(cmd)
   unset_env = ENV.select{|k| k.start_with?('BUNDLE')}
   unset_env.each_key{|k| unset_env[k] = nil}
   cmd = "bundle #{version} #{cmd} "
+  p "Running #{cmd}..."
   system(unset_env, cmd)
 end
 
