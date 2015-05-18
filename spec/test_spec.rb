@@ -7,8 +7,10 @@ end
 
 def bundle(cmd)
   version = "_#{ENV['BUNDLER_VERSION']}_" if ENV['BUNDLER_VERSION']
-  cmd = "bundle #{version} #{cmd}"
-  system(cmd)
+  unset_env = ENV.select{|k| k.start_with?('BUNDLE')}
+  unset_env.each_key{|k| unset_env[k] = nil}
+  cmd = "bundle #{version} #{cmd} "
+  system(unset_env, cmd)
 end
 
 # try to load bundler first
@@ -84,7 +86,7 @@ describe 'multi lockfile hack' do
   let(:gemfile_lock)  { read_lockfile('Gemfile.lock') }
 
   before(:all) do
-    Dir.chdir(File.expand_path('test-dir', __dir__))
+    Dir.chdir(File.expand_path('test-dir', File.dirname(__FILE__)))
     FileUtils.rm(Dir.glob('*.lock'))
   end
 
