@@ -1,0 +1,22 @@
+language: ruby
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - 2.1
+  - 2.2
+
+env
+  - BUNDLER_VERSION=1.5.0
+  - BUNDLER_VERSION=1.5.3
+  - BUNDLER_VERSION=1.6.0
+  - BUNDLER_VERSION=1.6.9
+  - BUNDLER_VERSION=1.7.0
+  - BUNDLER_VERSION=1.7.15
+  - BUNDLER_VERSION=1.8.0
+  - BUNDLER_VERSION=1.8.9
+  - BUNDLER_VERSION=1.9.0
+  - BUNDLER_VERSION=1.9.9
+  - BUNDLER_VERSION=1.10.0.pre.2
+
+install: gem install bundler:$BUNDLER_VERSION
+script: rspec spec/test_spec.rb
