@@ -106,6 +106,8 @@ end
 describe 'multi lockfile hack' do
   def compare_lockfiles(a, b, equal=true)
     files = [a, b].map{|file| File.read(file).strip.split("\n\n")}
+    # ignore the BUNDLED WITH header that comes with pre releases
+    files = files.map{|file| file.reject{|chunk| chunk.start_with?("BUNDLED WITH\n")} }
     if equal
       expect(files[0]).to match_array(files[1])
     else
