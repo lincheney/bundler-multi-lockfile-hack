@@ -55,7 +55,22 @@ shared_examples 'a lockfile writer' do
 
     it "#{file} should have a subset of Gemfile.lock's sources" do
       lockfile = read_lockfile(file)
-      expect(gemfile_lock.sources).to include(*lockfile.sources)
+      sources = lockfile.sources
+      sources = sources.reject{|src| src.is_a?(Bundler::Source::Rubygems)} if file == 'git_only.lock'
+      expect(gemfile_lock.sources).to include(*sources)
+    end
+
+    if file == 'git_only.lock'
+      it "#{file} should have a subset of Gemfile.lock's rubygems sources" do
+        lockfile = read_lockfile(file)
+
+        git_only = lockfile.sources.select{|src| src.is_a?(Bundler::Source::Rubygems)}
+        gemfile = gemfile_lock.sources.select{|src| src.is_a?(Bundler::Source::Rubygems)}
+
+        git_only.each do |src|
+          expect( gemfile.any?{|s| s.include?(src)} ).to be_truthy
+        end
+      end
     end
 
     it "#{file} should have a subset of Gemfile.lock's specs" do
