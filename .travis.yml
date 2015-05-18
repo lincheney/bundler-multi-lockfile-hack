@@ -18,5 +18,5 @@ env:
   - BUNDLER_VERSION=1.9.9
   - BUNDLER_VERSION=1.10.0.pre.2
 
-install: gem install bundler:$BUNDLER_VERSION
+install: "bundle install && gem install bundler:$BUNDLER_VERSION"
 script: rspec spec/test_spec.rb
