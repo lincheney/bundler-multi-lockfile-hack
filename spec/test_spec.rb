@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'securerandom'
+require 'fileutils'
 
 def read_lockfile(path)
   Bundler::LockfileParser.new(Bundler.read_file(path))
