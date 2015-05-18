@@ -1,3 +1,3 @@
-[submodule "spec/rbench-gem"]
-	path = spec/rbench-gem
+[submodule "spec/test-dir/rbench-gem"]
+	path = spec/test-dir/rbench-gem
 	url = https://github.com/somebee/rbench
