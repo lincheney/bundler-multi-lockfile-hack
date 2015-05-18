@@ -1,6 +1,8 @@
 require 'spec_helper'
 require 'securerandom'
 require 'fileutils'
+require 'bundler'
+p Bundler
 
 def read_lockfile(path)
   Bundler::LockfileParser.new(Bundler.read_file(path))
@@ -8,10 +10,12 @@ end
 
 def bundle(cmd)
   version = "_#{ENV['BUNDLER_VERSION']}_" if ENV['BUNDLER_VERSION']
-  unset_env = ENV.select{|k| k.start_with?('BUNDLE')}
+
+  unset_env = ENV.select{|k| /BUNDLE|RUBY/ =~ k}
   unset_env.each_key{|k| unset_env[k] = nil}
+
   cmd = "bundle #{version} #{cmd} "
-  p "Running #{cmd}..."
+  puts "Running #{cmd}..."
   system(unset_env, cmd)
 end
 
