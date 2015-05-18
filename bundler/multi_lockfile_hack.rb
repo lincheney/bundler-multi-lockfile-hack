@@ -9,7 +9,10 @@ module Bundler::MultiLockfileHack
     DefinitionHack.new(lockfile, @dependencies, @sources, unlock, @ruby_version)
   end
 
-  def generate_lockfile(lockfile: nil, gemfile: nil, groups: nil)
+  def generate_lockfile(options={})
+    lockfile = options[:lockfile]
+    gemfile = options[:gemfile]
+    groups = options[:groups]
     raise 'Expected one of gemfile or groups' unless gemfile or groups
 
     groups &&= Array(groups)
