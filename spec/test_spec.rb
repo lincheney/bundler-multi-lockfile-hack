@@ -68,7 +68,7 @@ shared_examples 'a lockfile writer' do
         gemfile = gemfile_lock.sources.select{|src| src.is_a?(Bundler::Source::Rubygems)}
 
         git_only.each do |src|
-          expect( gemfile.any?{|s| s.include?(src)} ).to be_truthy
+          expect( gemfile.any?{|s| (src.remotes - s.remotes).empty? } ).to be_truthy
         end
       end
     end
