@@ -82,12 +82,8 @@ module Bundler::MultiLockfileHack
     def _resolve_dep_names(dep, resolved)
       names = [dep.name]
 
-      if dep.source.nil? or dep.source.is_a?(Bundler::Source::Rubygems)
-        specs = [dep.to_spec]
-      else
-        specs = resolved.select{|s| s.source == dep.source}
-        names.concat specs.map(&:name)
-      end
+      specs = resolved.select{|s| s.name == dep.name}
+      names.concat specs.map(&:name)
 
       deps = specs.flat_map(&:runtime_dependencies)
       names.concat deps.map{|dep| _resolve_dep_names(dep, resolved)}
