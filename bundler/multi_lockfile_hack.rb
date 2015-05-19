@@ -36,30 +36,32 @@ module Bundler::MultiLockfileHack
       end
 
       deps = deps.select{|d| (d.groups & data.groups).any?} if data.groups
-      names = deps.map(&:name)
-      sources = SourceListHack.new(@sources){|src| (src.specs.map(&:name) & names).any?}
+      sources = SourceListHack.new(@sources)
       DefinitionHack2.new(@resolve, nil, deps, sources, @unlock, @ruby_version).lock(data.lockfile)
     end
   end
 
+
   if defined? Bundler::SourceList
 
     class SourceListHack < Bundler::SourceList
-      def initialize(sources, &filter)
+      attr_accessor :definition
+
+      def initialize(sources)
         super()
-        @path_sources = sources.path_sources.select(&filter)
-        @git_sources = sources.git_sources.select(&filter)
-        @rubygems_sources = (sources.rubygems_sources - [@rubygems_aggregate]).select(&filter)
+        @path_sources = sources.path_sources
+        @git_sources = sources.git_sources
+        @rubygems_sources = (sources.rubygems_sources - [@rubygems_aggregate])
+      end
+
+      def lock_sources
+        definition.sorted_sources(super)
       end
     end
 
   else
 
-    module SourceListHack
-      def self.new(sources, &filter)
-        sources.select(&filter)
-      end
-    end
+    SourceListHack = Array
 
   end
 
@@ -67,11 +69,37 @@ module Bundler::MultiLockfileHack
     def initialize(resolve, *args)
       super(*args)
       @resolve = resolve
+      @sources.definition = self unless @sources.is_a?(Array)
     end
 
     def resolve
-      super.select{|spec| @dependencies.map(&:name).include? spec.name}
+      resolved = super
+      names = @dependencies.flat_map{|dep| _resolve_dep_names(dep, resolved)}
+      resolved.select{|spec| names.include? spec.name}
     end
+
+    # recursively gather dependencies
+    def _resolve_dep_names(dep, resolved)
+      names = [dep.name]
+
+      if dep.source.nil? or dep.source.is_a?(Bundler::Source::Rubygems)
+        specs = [dep.to_spec]
+      else
+        specs = resolved.select{|s| s.source == dep.source}
+        names.concat specs.map(&:name)
+      end
+
+      deps = specs.flat_map(&:runtime_dependencies)
+      names.concat deps.map{|dep| _resolve_dep_names(dep, resolved)}
+      names.flatten
+    end
+
+    def sorted_sources(sources=nil)
+      sources ||= super()
+      specs = resolve()
+      sources.select{|src| src.nil? or specs.map(&:source).include?(src)}
+    end
+
   end
 
 end

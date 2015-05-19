@@ -23,18 +23,19 @@ end
 exit(1) unless bundle('--version')
 
 lockfiles = {
-  "doc.lock" => %w{ rdoc sdoc },
-  "doc.test.lock" => %w{ rdoc sdoc rspec rspec-rails shoulda-matchers codeclimate-test-reporter },
-  "other.lock" => %w{ json activesupport maruku rbench },
-  "rails.test.lock" => %w{ rspec-rails shoulda-matchers codeclimate-test-reporter },
-  "git_only.lock" => %w{ mime-types multi_json colorize },
+  'doc.lock' => %w{ rdoc sdoc },
+  'doc.test.lock' => %w{ rdoc sdoc rspec rspec-rails shoulda-matchers codeclimate-test-reporter },
+  'other.lock' => %w{ json activesupport maruku rbench },
+  'rails.test.lock' => %w{ rspec-rails shoulda-matchers codeclimate-test-reporter },
+  'git_only.lock' => %w{ mime-types multi_json colorize },
 }
 
 git_sources = {
-  'codeclimate-test-reporter' => 'ruby-test-reporter',
-  'mime-types' => 'ruby-mime-types',
-  'colorize' => 'colorize',
-  'multi_json' => 'multi_json',
+  'dock.lock' => %w{ },
+  'doc.test.lock' => %w{ ruby-test-reporter simplecov },
+  'other.lock' => %w{ },
+  'rails.test.lock' => %w{ ruby-test-reporter simplecov },
+  'git_only.lock' => %w{ ruby-mime-types multi_json colorize },
 }
 
 path_sources = {
@@ -78,6 +79,13 @@ shared_examples 'a lockfile writer' do
       expect(gemfile_lock.specs).to include(*lockfile.specs)
     end
 
+    it "#{file} should have all the required specs" do
+      lockfile = read_lockfile(file)
+      lockfile.specs.each do |spec|
+        expect(lockfile.specs.map(&:name)).to include(*spec.dependencies.map(&:name))
+      end
+    end
+
     it "#{file} should have only the correct dependencies" do
       lockfile = read_lockfile(file)
       expect(lockfile.dependencies.map(&:name)).to match_array(deps)
@@ -87,7 +95,7 @@ shared_examples 'a lockfile writer' do
       it "#{file} should have only the correct git sources" do
         lockfile = read_lockfile(file)
         sources = lockfile.sources.select{|s| s.instance_of? Bundler::Source::Git}
-        expected_sources = deps.map{|d| git_sources[d]}.compact
+        expected_sources = git_sources[file]
         expect(sources.map(&:name)).to match_array(expected_sources)
       end
 
