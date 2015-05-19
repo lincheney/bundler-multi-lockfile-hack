@@ -85,7 +85,7 @@ module Bundler::MultiLockfileHack
       specs = resolved.select{|s| s.name == dep.name}
       names.concat specs.map(&:name)
 
-      deps = specs.flat_map(&:runtime_dependencies)
+      deps = specs.flat_map(&:dependencies).select{|dep| dep.type == :runtime}
       names.concat deps.map{|dep| _resolve_dep_names(dep, resolved)}
       names.flatten
     end
