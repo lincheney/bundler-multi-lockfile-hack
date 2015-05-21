@@ -43,7 +43,7 @@ generate_lockfile(groups: :test, gemfile: 'other.gemfile')  # lockfile will be n
 generate_lockfile(groups: :test, lockfile: 'test.gems.lock')
 ```
 
-Generating lockfiles for gemfiles is best used in conjunction with the `eval_gemfile` method that Bundler already provides.
+Generating lockfiles for gemfiles is best used in conjunction with the `eval_gemfile` method that Bundler already provides. This will occur every time `bundle install` or `bundle update` is run.
 
 ## Purpose
 
