@@ -6,6 +6,7 @@ Hack to make bundler generate multiple lockfiles (e.g. for a particular group or
 The generated lockfiles will be in 'sync' with your master `Gemfile.lock`,
 i.e. they will specify the same gem versions.
 
+This hack has been *reasonably* well tested on various versions of Bundler; see the [test results](https://travis-ci.org/lincheney/bundler-multi-lockfile-hack). There are no tests related to the `platform` in gemfiles. Use with caution if you intend to use on multiple platforms and/or with multiple ruby implementations.
 
 ## Usage
 
